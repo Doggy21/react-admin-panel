@@ -1,12 +1,17 @@
 import React from 'react';
 import './UserAddForm.css';
+
+const wrongNameLabel="Name cannot be empty!"
+const wrongEmailLabel="Email should contain '@' and '.'"
+
 class UserAddForm extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             name: '',
             email: '',
-            isGoldClient: false
+            isGoldClient: false,
+            hasValidationErrors: false
         };
     }
 
@@ -22,22 +27,47 @@ class UserAddForm extends React.Component {
         this.setState({isGoldClient: event.target.checked});
     }
 
+    validateData(name,email){
+        if(name.trim()==="" || (!email.includes("@") || !email.includes("."))){
+            this.errorState(true);
+            return false;
+        }else{
+            this.errorState(false);
+            return true;
+        }
+        // sau pot folosi regex: email.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)
+      }
+
+    errorState(value){
+        this.setState((prevState)=>{
+            return{
+                hasValidationErrors:value
+            }
+        })
+        
+    }
+
     render() {
         const {name, email, isGoldClient} = this.state;
-
         return (
             <form
                 className="user-add-form"
-                onSubmit={(event) => this.props.submitAddForm(event, name, email, isGoldClient)}
+                onSubmit={(event) =>{ 
+                    event.preventDefault();
+                    if(this.validateData(name,email)){
+                        console.log("here")
+                        this.props.submitAddForm(event, name, email, isGoldClient)
+                      }
+                }}
             >
                 <h2>Adauga utilizatori:</h2>
-                <label htmlFor="name">Nume:</label>
+                <label htmlFor="name">{ this.state.hasValidationErrors===true ? "Name: "+wrongNameLabel : "Name:" }</label>
                 <input
                     type="text"
                     name="name"
                     onChange={(event) => this.updateName(event)}
                 />
-                <label htmlFor="email">Email:</label>
+                <label htmlFor="email">{this.state.hasValidationErrors===true ? "Email: "+wrongEmailLabel : "Email:" }</label>
                 <input
                     type="text"
                     name="email"

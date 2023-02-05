@@ -1,23 +1,33 @@
 import React from 'react';
 import UserItem from './UserItem';
 
-function UserList(props) {
-    const { users } = props;
+class UserList extends React.Component {
 
-    return (
-        <div>
-            <h2>Lista utilizatorilor:</h2>
-            { users.map((user, index) => {
-                return <UserItem
-                    id={ user.id }
-                    name={ user.name }
-                    email={ user.email }
-                    isGoldClient={ user.isGoldClient }
-                    key={ index }
-                />
-            })}
-        </div>
-    );
+
+    render(){
+        return (
+            <div>
+                <h2>Lista utilizatorilor:</h2>
+                { this.props.users.map((user, index) => {
+                    
+                    return<div>
+                    <UserItem
+                        id={ user.id }
+                        name={ user.name }
+                        email={ user.email }
+                        isGoldClient={ user.isGoldClient }
+                        address={ user.address }
+                        key={ index }
+                    />
+                    <button onClick={
+                        () => this.props.removeUser(user.id)
+                        }>Delete</button>
+                    </div>
+                })}
+                
+            </div>
+        );
+    }
 }
 
 export default UserList;
